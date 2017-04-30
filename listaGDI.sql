@@ -102,12 +102,12 @@ FROM patrocinar P, empresa E
 WHERE P.cod_empresa IN (SELECT)
 
 
-
 SELECT P.cod_contrato
 FROM patrocinar P
 --WHERE P.cod_contrato IS NOT NULL
 GROUP BY P.cod_contrato
 HAVING COUNT(*) IN (SELECT MAX(COUNT(*)) FROM patrocinador P GROUP BY P.cod_contrato)
+#AINDA FALTA
 
 #Retorne o Número Total de Contratos que cada Patrocinador existente 
 #fez no mês de Fevereiro até Abril de 2017. Apenas os 5 que fizeram mais contratos. Use ROWNUM.
@@ -121,11 +121,35 @@ AND P.cod_contrato IN (SELECT C.cod
 AND ROWNUM <= 5
 GROUP BY E.razao_social
 
-/*Precisa dos ajustes nos dados para ter resultados*/
+/*Precisa dos ajustes nos dados para ter resultados como a questao pede*/
 
 #Mostre o número de Funcionários por cada Setor da Empresa de CNPJ '20069875410'. Utilize COUNT.
 
+SELECT S.descricao, COUNT(*)
+FROM setor S, funcionario F
+WHERE S.cnpj_empresa = 94642232300001
+AND F.cod_setor = S.cod
+GROUP BY S.descricao;
 
+/*Só tem pra o CNPJ 94642232300001
+
+DESCRICAO	COUNT(*)
+Atividades	2
+Almoxarifado	3
+TI	3
+Financeiro	3
+ServiÁos Gerais	2
+RH	2
+*/
+
+#Liste Nome e CPF de todos os Funcionários com o Cargo de 'Bilheteiro' de uma Federação de Futebol.
+
+SELECT F.nome, F.cpf
+FROM funcionario F, cargo C
+WHERE F.cod_cargo = C.cod
+AND C.descricao = 'Contador' 
+
+/*Para os dados pedidos nao gera resultado*/
 
 
 
