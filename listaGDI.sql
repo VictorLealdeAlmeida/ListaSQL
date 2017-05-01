@@ -1,18 +1,17 @@
 #QUESTAO 1
 #Retorne o CNPJ e o Ano de Fundação do Clube que possui mais participações em Campeonatos. Use COUNT.
 
-SELECT C.cnpj_empresa, C.ano_fundacao, COUNT(*) 
-FROM clube c, participar P
+SSELECT C.cnpj_empresa, C.ano_fundacao 
+FROM clube C, participar P
 WHERE C.cnpj_empresa = P.cnpj_clube
-GROUP BY c.cnpj_empresa, c.ano_fundacao
-HAVING COUNT(*) = 2; #VER COMO PEGAR O MAX
+GROUP BY C.cnpj_empresa, C.ano_fundacao
+HAVING COUNT(*) IN (SELECT MAX(COUNT(*)) 
+                    FROM participar P 
+                    GROUP BY P.cnpj_clube);
 
 /* Reposta:
-CNPJ_EMPRESA	ANO_FUNDACAO	COUNT(*)
-14519599024395	1999	2
-75755568005489	1988	2
-89888265542625	1973	2
-85843255014304	1957	2
+CNPJ_EMPRESA	ANO_FUNDACAO
+57916881061973	1905
 */
 
 #QUSTAO 2
@@ -25,7 +24,7 @@ ON E.cnpj = C.cnpj_empresa
 WHERE E.cnpj LIKE '%01%'
 AND E.cnpj IN (SELECT J.cnpj_clube
                 FROM jogar J
-                WHERE J.data LIKE '%MAY-17%');
+                WHERE J.data LIKE '%MAY-16%');
 
 /*Respota: no data found
 .Nao tem jogos em maio*/
@@ -40,11 +39,14 @@ WHERE E.cod IN (SELECT J.cod_estadio
                 WHERE J.data LIKE '%JAN-17')
                 AND E.capacidade IN (SELECT MAX(capacidade) FROM estadio);
 
-/*Reposta: no data found
-.Nao teve nenhum jogo em janeiro*/
+/*Reposta: 
+NOME
+Arruda
+*/
 
-#Retorne o Código dos 3 Estádios que mais sediaram jogos no Campeonato de Nome 'Copa Nordeste'
-#e o Código dos 3 Estádios que mais sediaram jogos no Campeonato de Nome 'Copa Sulamericana' . Utilize UNION e ORDER BY.
+#Retorne o Código dos 3 Estádios que mais sediaram jogos no Campeonato de Nome 'Campeonato Pernambucano' e o 
+#Código dos 3 Estádios que mais sediaram jogos no Campeonato de Nome 'Copa Pernambucano' . Utilize UNION e ORDER BY.
+
 SELECT J.cod_estadio, COUNT(*) 
 FROM jogar J
 WHERE j.cod_campeonato in (SELECT C.cod
@@ -57,7 +59,7 @@ SELECT J.cod_estadio, COUNT(*)
 FROM jogar J
 WHERE j.cod_campeonato in (SELECT C.cod
                             FROM campeonato C
-                            WHERE C.nome = 'Campeonato Penambucano Sub-20')
+                            WHERE C.nome = 'Copa Pernambucano')
 GROUP BY J.cod_estadio 
 ORDER BY COUNT(*) DESC;
 
@@ -80,22 +82,23 @@ SEXO COUNT(*)
 
 SELECT J.data, J.cod_estadio
 FROM jogar J
-WHERE J.data LIKE '16-JUL-17'
-OR J.data LIKE '17-JUL-17'
-OR J.data LIKE '18-JUL-17'
+WHERE J.data = TO_DATE('15-JAN-17')
+OR J.data = TO_DATE('16-JAN-17')
+OR J.data = TO_DATE('17-JAN-17')
 
 /*
 DATA	COD_ESTADIO
-17-JUL-17	103
-17-JUL-17	102
-16-JUL-17	107
-16-JUL-17	107
-17-JUL-17	103
-17-JUL-17	102
+17-JAN-17	103
+16-JAN-17	102
+15-JAN-17	100
+15-JAN-17	100
+16-JAN-17	102
+17-JAN-17	102
+17-JAN-17	100
 */
 
 #Indique o CNPJ, Razão Social e 
-#Tipo de Patrocínio do Patrocinador que possui mais contratos no patrocínio do Campeonato de código 200.
+#Tipo de Patrocínio do Patrocinador que possui mais contratos no patrocínio do Campeonato de código 301.
 
 SELECT E.cnpj, E.razao_social, P.tipo_patrocinio
 FROM patrocinar P, empresa E
@@ -116,22 +119,20 @@ FROM patrocinador P, empresa E
 WHERE P.cnpj_empresa = E.cnpj
 AND P.cod_contrato IN (SELECT C.cod
                         FROM contrato C
-                        WHERE C.data_inicio >= TO_DATE('1-FEB-10')
-                        AND C.data_fim < TO_DATE('1-MAR-22'))
-AND ROWNUM <= 5
+                        WHERE C.data_inicio >= TO_DATE('1-FEB-17')
+                        AND C.data_fim < TO_DATE('1-MAY-17'))
+AND ROWNUM <= 2
 GROUP BY E.razao_social
 
 /*Precisa dos ajustes nos dados para ter resultados como a questao pede*/
 
-#Mostre o número de Funcionários por cada Setor da Empresa de CNPJ '20069875410'. Utilize COUNT.
+#Mostre o número de Funcionários por cada Setor da Empresa de CNPJ '94642232300001'. Utilize COUNT.
 
 SELECT S.descricao, COUNT(*)
 FROM setor S, funcionario F
 WHERE S.cnpj_empresa = 94642232300001
 AND F.cod_setor = S.cod
 GROUP BY S.descricao;
-
-/*Só tem pra o CNPJ 94642232300001
 
 DESCRICAO	COUNT(*)
 Atividades	2
@@ -147,9 +148,14 @@ RH	2
 SELECT F.nome, F.cpf
 FROM funcionario F, cargo C
 WHERE F.cod_cargo = C.cod
-AND C.descricao = 'Contador' 
+AND C.descricao = 'Bilheteiro' 
 
-/*Para os dados pedidos nao gera resultado*/
+/*
+NOME						CPF
+Diego Silva Gomes			255116122-35
+Tomás Ribeiro Rodrigues		318244656-88
+Nicolas Araujo Dias			386417499-69
+*/
 
 
 
