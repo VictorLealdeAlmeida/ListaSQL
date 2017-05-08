@@ -21,7 +21,7 @@ CNPJ_EMPRESA	ANO_FUNDACAO
 SELECT E.razao_social
 FROM empresa E INNER JOIN clube C
 ON E.cnpj = C.cnpj_empresa
-WHERE E.cnpj LIKE '%01%'
+WHERE E.cnpj NOT LIKE '%01%'
 AND E.cnpj IN (SELECT J.cnpj_clube
                 FROM jogar J
                 WHERE J.data LIKE '%MAY-16%');
@@ -43,6 +43,16 @@ WHERE E.cod IN (SELECT J.cod_estadio
 NOME
 Arruda
 */
+
+#Opcao de solução
+
+SELECT E.nome
+FROM estadio E, jogar J
+WHERE E.cod = J.cod_estadio
+AND J.data LIKE '%JAN-17%'
+AND E.capacidade in (SELECT MAX(capacidade) 
+                        FROM estadio)
+GROUP BY E.nome
 
 #Retorne o Código dos 3 Estádios que mais sediaram jogos no Campeonato de Nome 'Campeonato Pernambucano' e o 
 #Código dos 3 Estádios que mais sediaram jogos no Campeonato de Nome 'Copa Pernambucano' . Utilize UNION e ORDER BY.
@@ -85,32 +95,31 @@ FROM jogar J
 WHERE J.data = TO_DATE('15-JAN-17')
 OR J.data = TO_DATE('16-JAN-17')
 OR J.data = TO_DATE('17-JAN-17')
+GROUP BY J.data, J.cod_estadio
 
 /*
 DATA	COD_ESTADIO
-17-JAN-17	103
-16-JAN-17	102
 15-JAN-17	100
-15-JAN-17	100
-16-JAN-17	102
 17-JAN-17	102
+16-JAN-17	102
+17-JAN-17	103
 17-JAN-17	100
 */
 
 #Indique o CNPJ, Razão Social e 
 #Tipo de Patrocínio do Patrocinador que possui mais contratos no patrocínio do Campeonato de código 301.
 
-SELECT E.cnpj, E.razao_social, P.tipo_patrocinio
-FROM patrocinar P, empresa E
-WHERE P.cod_empresa IN (SELECT)
+SELECT P.cnpj_empresa, E.razao_social, P.tipo_patrocinio  
+FROM patrocinador P, empresa E, patrocinar PR
+WHERE P.cnpj_empresa = E.cnpj
+AND P.cnpj_empresa = PR.cnpj_patrocinador
+AND PR.cod_campeonato = 301;
 
-
-SELECT P.cod_contrato
-FROM patrocinar P
---WHERE P.cod_contrato IS NOT NULL
-GROUP BY P.cod_contrato
-HAVING COUNT(*) IN (SELECT MAX(COUNT(*)) FROM patrocinador P GROUP BY P.cod_contrato)
-#AINDA FALTA
+/*Falta pegar o maior
+CNPJ_EMPRESA	RAZAO_SOCIAL						TIPO_PATROCINIO
+19547278302429	Prefeitura de Salgueiro				Publico
+89399529222292	Companhia Energética de Pernambuco	Publico
+*/
 
 #Retorne o Número Total de Contratos que cada Patrocinador existente 
 #fez no mês de Fevereiro até Abril de 2017. Apenas os 5 que fizeram mais contratos. Use ROWNUM.
@@ -134,13 +143,14 @@ WHERE S.cnpj_empresa = 94642232300001
 AND F.cod_setor = S.cod
 GROUP BY S.descricao;
 
-DESCRICAO	COUNT(*)
-Atividades	2
+/*
+DESCRICAO		COUNT(*)
+Atividades		2
 Almoxarifado	3
-TI	3
-Financeiro	3
+TI				3
+Financeiro		3
 ServiÁos Gerais	2
-RH	2
+RH				2
 */
 
 #Liste Nome e CPF de todos os Funcionários com o Cargo de 'Bilheteiro' de uma Federação de Futebol.
@@ -156,19 +166,6 @@ Diego Silva Gomes			255116122-35
 Tomás Ribeiro Rodrigues		318244656-88
 Nicolas Araujo Dias			386417499-69
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
